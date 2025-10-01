@@ -3,17 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pengumuman National Summit – Bakti BCA</title>
+  <title>Pengumuman National Summit BC 2025 – Bakti BCA</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Alpine.js for small interactivity (optional but handy) -->
+  <!-- Alpine.js for lightweight reactivity -->
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <!-- SheetJS (XLSX) for reading Excel files from URL -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <link rel="icon" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4da.svg"/>
-  <meta name="description" content="Cek apakah kamu terpilih untuk National Summit Bakti BCA. Masukkan Nama Panggilan dan pilih Universitasmu.">
+  <meta name="description" content="Cek status terpilih National Summit Bakti Champions dengan memasukkan NIM.">
   <style>
-    /* fallback font smoothness */
     html { scroll-behavior: smooth; }
   </style>
 </head>
@@ -32,24 +31,17 @@
     <section class="mb-6">
       <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl p-6 shadow">
         <h2 class="text-2xl md:text-3xl font-bold">Apakah kamu terpilih ke <span class="whitespace-nowrap">National Summit?</span></h2>
-        <p class="mt-2 text-white/90">Masukkan <b>Nama Panggilan</b> dan pilih <b>Universitas</b>. Sistem akan mengecek berdasarkan data resmi pada file Excel yang terhubung.</p>
+        <p class="mt-2 text-white/90">Masukkan <b>NIM</b> kamu. Sistem akan mencocokkan data dari file Excel resmi yang terhubung.</p>
       </div>
     </section>
 
-    <!-- Form Card -->
+    <!-- Form Card (NIM only) -->
     <section class="bg-white rounded-2xl shadow p-6 border">
       <div class="grid md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium mb-1" for="nickname">Nama Panggilan</label>
-          <input id="nickname" x-model.trim="form.nickname" type="text" placeholder="contoh: Bimo" class="w-full rounded-xl border-slate-300 focus:border-blue-600 focus:ring-blue-600" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1" for="university">Perguruan Tinggi</label>
-          <select id="university" x-model="form.university" class="w-full rounded-xl border-slate-300 focus:border-blue-600 focus:ring-blue-600">
-            <option value="" disabled selected>Pilih perguruan tinggi…</option>
-            <template x-for="u in universities" :key="u"><option :value="u" x-text="u"></option></template>
-          </select>
-          <p class="text-xs text-slate-500 mt-1" x-show="universities.length===0">Daftar perguruan tinggi akan muncul setelah file Excel termuat.</p>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium mb-1" for="nim">NIM</label>
+          <input id="nim" x-model.trim="form.nim" type="text" inputmode="numeric" placeholder="contoh: 12345678" class="w-full rounded-xl border-slate-300 focus:border-blue-600 focus:ring-blue-600" />
+          <p class="text-xs text-slate-500 mt-1">Gunakan NIM persis seperti yang terdaftar (tanpa spasi). Sistem menoleransi huruf besar/kecil dan tanda baca.</p>
         </div>
       </div>
 
@@ -63,7 +55,7 @@
 
       <!-- Result -->
       <div class="mt-6" x-show="result.state !== 'idle'">
-        <!-- Found but not selected / selected -->
+        <!-- SELECTED -->
         <template x-if="result.state==='selected'">
           <div class="rounded-2xl border-2 border-emerald-600 bg-emerald-50 p-5">
             <h3 class="text-emerald-800 font-semibold text-xl flex items-center gap-2">
@@ -81,21 +73,22 @@
             <div class="mt-4">
               <div class="rounded-xl bg-emerald-600 text-white p-4">
                 <p class="font-medium">Tindak Lanjut:</p>
-                <p class="mt-1">Segera bergabung ke grup WhatsApp panitia melalui tautan berikut untuk menerima informasi teknis keberangkatan dan rundown acara.</p>
+                <p class="mt-1">Segera bergabung ke grup WhatsApp panitia untuk informasi teknis.</p>
                 <p class="mt-2"><a class="underline font-semibold" :href="waLink()" target="_blank" rel="noopener">Bergabung ke Grup WA Panitia (087831138966)</a></p>
-                <p class="mt-2 text-xs text-emerald-100">Catatan: Pastikan nomor WA kamu aktif & gunakan nama sesuai KTP.</p>
+                <p class="mt-2 text-xs text-emerald-100">Pastikan nomor WA aktif & gunakan nama sesuai KTP.</p>
               </div>
             </div>
           </div>
         </template>
 
+        <!-- NOT SELECTED -->
         <template x-if="result.state==='not_selected'">
           <div class="rounded-2xl border-2 border-rose-600 bg-rose-50 p-5">
             <h3 class="text-rose-800 font-semibold text-xl flex items-center gap-2">
               <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" stroke-width="2"/></svg>
               Mohon maaf, kamu <span class="ml-1">BELUM TERPILIH</span> 🙏
             </h3>
-            <p class="mt-1 text-rose-900">Tetap semangat ya! Kesempatan lain menantimu. Berikut data yang kami temukan di database:</p>
+            <p class="mt-1 text-rose-900">Tetap semangat ya! Kesempatan lain menantimu. Berikut data sesuai database:</p>
             <div class="mt-3 grid md:grid-cols-2 gap-3 text-sm">
               <div class="bg-white rounded-xl p-3 border"><span class="text-slate-500">Nama Lengkap</span><div class="font-medium" x-text="selectedRow.fullname"></div></div>
               <div class="bg-white rounded-xl p-3 border"><span class="text-slate-500">Nama Panggilan</span><div class="font-medium" x-text="selectedRow.nickname"></div></div>
@@ -112,18 +105,19 @@
           </div>
         </template>
 
+        <!-- NOT FOUND -->
         <template x-if="result.state==='not_found'">
           <div class="rounded-2xl border-2 border-amber-500 bg-amber-50 p-5">
             <h3 class="text-amber-900 font-semibold text-xl">Data tidak ditemukan</h3>
-            <p class="mt-1 text-amber-900">Nama panggilan dan/atau perguruan tinggi yang diinput <b>tidak sesuai</b> dengan database. Mohon cek lagi ejaan nama panggilan (sesuai yang didaftarkan) dan pastikan memilih universitas dari daftar.</p>
+            <p class="mt-1 text-amber-900">NIM yang diinput <b>tidak sesuai</b> dengan database. Mohon cek lagi ejaannya (tanpa spasi/tanda baca).</p>
             <ul class="list-disc pl-6 mt-3 text-amber-900 text-sm space-y-1">
-              <li>Gunakan nama panggilan yang kamu tulis saat pendaftaran.</li>
-              <li>Coba variasi penulisan (mis. "Abi" / "Abby").</li>
+              <li>Gunakan NIM persis seperti yang kamu tulis saat pendaftaran.</li>
               <li>Jika tetap tidak ditemukan, hubungi panitia.</li>
             </ul>
           </div>
         </template>
 
+        <!-- ERROR -->
         <template x-if="result.state==='error'">
           <div class="rounded-2xl border-2 border-rose-600 bg-rose-50 p-5">
             <h3 class="text-rose-900 font-semibold text-xl">Terjadi kesalahan memuat data</h3>
@@ -139,9 +133,9 @@
       <div class="bg-white rounded-2xl p-4 border">
         <p class="font-medium text-slate-700">Catatan Teknis</p>
         <ol class="list-decimal pl-5 mt-2 space-y-1">
-          <li>File Excel harus memiliki kolom berikut (nama boleh bervariasi; sistem mencoba mengenali otomatis): <em>Asal Universitas</em>, <em>Nama Panggilan</em>, <em>Nama Lengkap</em>, <em>NIM</em>, <em>Prodi/Jurusan</em>, dan <em>Terpilih</em> (<code>YA/TIDAK</code>).</li>
-          <li>Atau, bisa juga menyediakan sheet khusus <code>Undangan</code>/<code>Selected</code> yang berisi baris-baris peserta terpilih (berdasarkan <em>NIM</em> atau <em>Nama Panggilan</em>).</li>
-          <li>Ubah konstanta <code>EXCEL_URL</code> pada bagian <strong>Konfigurasi</strong> di bawah agar menunjuk ke file Excel di repo GitHub kamu (mis. <code>data/bakti_champions.xlsx</code> atau link RAW).</li>
+          <li>File Excel harus memiliki kolom berikut (nama fleksibel; sistem mencoba mengenali otomatis): <em>NIM</em>, <em>Nama Lengkap</em>, <em>Nama Panggilan</em>, <em>Asal Universitas</em>, <em>Prodi/Jurusan</em>, dan <em>Terpilih</em> (<code>YA/TIDAK</code>).</li>
+          <li>Alternatif tanpa kolom <code>Terpilih</code>: sediakan sheet khusus <code>Undangan/Selected/Terpilih</code> yang memuat daftar <em>NIM</em> peserta terpilih.</li>
+          <li>Ubah konstanta <code>EXCEL_URL</code> pada bagian <strong>Konfigurasi</strong> agar menunjuk ke file Excel di repo GitHub kamu, mis: <code>data/GithubData_NationalSummit.xlsx</code>.</li>
         </ol>
       </div>
       <p class="mt-3">© <span x-text="new Date().getFullYear()"></span> Bakti BCA – National Summit.</p>
@@ -154,7 +148,7 @@
         // ======================
         // Konfigurasi
         // ======================
-        EXCEL_URL: 'data/GithubData_NationalSummit.xlsx', // ganti ke path/URL RAW di GitHub, mis: 'https://raw.githubusercontent.com/username/repo/main/data/bakti_champions.xlsx'
+        EXCEL_URL: 'data/GithubData_NationalSummit.xlsx', // ganti ke path/URL RAW di GitHub jika berbeda
         SHEET_NAME_SELECTED_HINTS: ['undangan','selected','terpilih','national summit'],
         // ======================
 
@@ -162,8 +156,7 @@
         loading: false,
         workbook: null,
         rows: [],
-        universities: [],
-        form: { nickname: '', university: '' },
+        form: { nim: '' },
         result: { state: 'idle', message: '' },
         selectedRow: { fullname: '', nickname: '', nim: '', major: '', university: '' },
 
@@ -177,10 +170,11 @@
             statusEl.textContent = 'Membaca lembar…';
             this.workbook = XLSX.read(ab, { type: 'array' });
 
-            // Ambil sheet utama (asumsi sheet pertama berisi data master)
+            // Ambil sheet utama (sheet pertama = data master)
             const firstSheetName = this.workbook.SheetNames[0];
             const firstSheet = this.workbook.Sheets[firstSheetName];
-            const json = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+            // raw:false agar format teks dipakai (membantu jaga leading zero pada NIM)
+            const json = XLSX.utils.sheet_to_json(firstSheet, { defval: '', raw: false });
 
             // Normalisasi header -> field map
             const mapKey = (k) => String(k || '').trim().toLowerCase();
@@ -194,7 +188,6 @@
               selected: ['terpilih','selected','undangan','invite','invited','national summit']
             };
 
-            // Detect header mapping from first row keys
             const headerKeys = json.length ? Object.keys(json[0]).map(mapKey) : [];
             const headerMap = {}; // field -> actualKey
             function findKey(possible) {
@@ -202,18 +195,14 @@
                 const idx = headerKeys.findIndex(h => h === pk);
                 if (idx !== -1) return Object.keys(json[0])[idx];
               }
-              // fallback: partial includes
               for (const pk of possible) {
                 const idx = headerKeys.findIndex(h => h.includes(pk));
                 if (idx !== -1) return Object.keys(json[0])[idx];
               }
               return null;
             }
-            for (const field in FIELDS) {
-              headerMap[field] = findKey(FIELDS[field]);
-            }
+            for (const field in FIELDS) headerMap[field] = findKey(FIELDS[field]);
 
-            // Build rows with safe access
             const safe = (row, key) => (key && row[key] !== undefined ? String(row[key]).trim() : '');
             this.rows = json.map(r => ({
               university: safe(r, headerMap.university),
@@ -223,48 +212,36 @@
               faculty: safe(r, headerMap.faculty),
               major: safe(r, headerMap.major),
               selected: safe(r, headerMap.selected)
-            })).filter(r => r.university || r.nickname || r.fullname);
+            })).filter(r => r.nim);
 
-            // Try to load selected list from a dedicated sheet if no 'selected' column found
+            // Fallback: sheet khusus terpilih
             let selectedSet = new Set();
             const hasSelectedCol = !!headerMap.selected;
             if (!hasSelectedCol) {
               const selSheetName = this.workbook.SheetNames.find(n => this.SHEET_NAME_SELECTED_HINTS.includes(n.trim().toLowerCase()));
               if (selSheetName) {
                 const selSheet = this.workbook.Sheets[selSheetName];
-                const selJson = XLSX.utils.sheet_to_json(selSheet, { defval: '' });
-                // Build set from NIM first, fallback to nickname+university
+                const selJson = XLSX.utils.sheet_to_json(selSheet, { defval: '', raw: false });
                 for (const row of selJson) {
                   const keys = Object.keys(row);
                   const lowerKeys = keys.map(k => k.toLowerCase());
-                  const nimKeyIdx = lowerKeys.findIndex(k => ['nim','npm','student id'].includes(k));
-                  const nicknameKeyIdx = lowerKeys.findIndex(k => k.includes('panggilan') || k.includes('nickname'));
-                  const univKeyIdx = lowerKeys.findIndex(k => k.includes('universitas') || k.includes('perguruan') || k.includes('university'));
+                  const nimKeyIdx = lowerKeys.findIndex(k => ['nim','npm','student id','no. induk','no induk','n i m'].includes(k));
                   if (nimKeyIdx !== -1) {
-                    selectedSet.add(String(row[keys[nimKeyIdx]]).trim().toLowerCase());
-                  } else if (nicknameKeyIdx !== -1 && univKeyIdx !== -1) {
-                    const combo = `${String(row[keys[nicknameKeyIdx]]).trim().toLowerCase()}|${String(row[keys[univKeyIdx]]).trim().toLowerCase()}`;
-                    selectedSet.add(combo);
+                    selectedSet.add(this.normalizeNIM(String(row[keys[nimKeyIdx]])));
                   }
                 }
               }
             }
 
-            // Build university options (unique, sorted)
-            const uSet = new Set(this.rows.map(r => r.university).filter(Boolean));
-            this.universities = Array.from(uSet).sort((a,b) => a.localeCompare(b));
-
-            // If selected column absent but we have a selectedSet, tag rows
+            // Tandai selected dari set jika perlu
             if (!hasSelectedCol && selectedSet.size) {
               this.rows = this.rows.map(r => {
-                const keyNim = (r.nim || '').toLowerCase();
-                const keyCombo = `${(r.nickname||'').toLowerCase()}|${(r.university||'').toLowerCase()}`;
-                const isSel = selectedSet.has(keyNim) || selectedSet.has(keyCombo);
+                const isSel = selectedSet.has(this.normalizeNIM(r.nim));
                 return { ...r, selected: isSel ? 'YA' : (r.selected || '') };
               });
             }
 
-            // Mark ready
+            // Ready
             this.ready = true;
             document.getElementById('dataStatus').textContent = `Data termuat (${this.rows.length} baris)`;
           } catch (err) {
@@ -275,40 +252,37 @@
         },
 
         resetForm() {
-          this.form.nickname = '';
-          this.form.university = '';
+          this.form.nim = '';
           this.result = { state: 'idle', message: '' };
           this.selectedRow = { fullname: '', nickname: '', nim: '', major: '', university: '' };
         },
 
-        normalizeName(s) {
+        normalizeNIM(s) {
           return String(s || '')
             .normalize('NFKD')
             .replace(/[\u0300-\u036f]/g, '')
-            .replace(/\s+/g, ' ')
-            .trim()
+            .replace(/\s+/g, '')
+            .replace(/[^0-9a-zA-Z]/g, '')
             .toLowerCase();
         },
 
         waLink() {
-          // Pre-filled message to admin number
           const msg = encodeURIComponent('Halo Panitia National Summit, saya sudah cek dan TERPILIH sebagai peserta National Summit 2025. Mohon info tindak lanjut ya.');
           return `https://wa.me/6287831138966?text=${msg}`;
         },
 
         check() {
           this.loading = true;
-          const nick = this.normalizeName(this.form.nickname);
-          const univ = this.normalizeName(this.form.university);
+          const nim = this.normalizeNIM(this.form.nim);
 
-          if (!nick || !univ) {
-            this.result = { state: 'not_found', message: 'Nama/Universitas kosong' };
+          if (!nim) {
+            this.result = { state: 'not_found', message: 'NIM kosong' };
             this.loading = false;
             return;
           }
 
-          // Cari baris yang cocok: nama panggilan + universitas
-          const found = this.rows.find(r => this.normalizeName(r.nickname) === nick && this.normalizeName(r.university) === univ);
+          // Cari berdasarkan NIM saja (unik)
+          const found = this.rows.find(r => this.normalizeNIM(r.nim) === nim);
 
           if (!found) {
             this.result = { state: 'not_found', message: 'Tidak ditemukan' };
@@ -331,7 +305,6 @@
           this.result = { state: isSelected ? 'selected' : 'not_selected', message: '' };
           this.loading = false;
 
-          // Scroll to result for mobile
           setTimeout(() => {
             document.querySelector('[x-data] section.bg-white').scrollIntoView({ behavior: 'smooth', block: 'start' });
           }, 50);
